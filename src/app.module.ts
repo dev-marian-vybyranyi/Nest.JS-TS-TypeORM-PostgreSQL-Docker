@@ -8,14 +8,16 @@ import { DummyService } from './dummy/dummy.service';
 import { LoggerService } from './logger/logger.service';
 import { MessagesFormaterService } from './messages-formater/messages-formater.service';
 import { TasksModule } from './tasks/tasks.module';
+import { typeOrmConfig } from './config/database.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      load: [appConfig],
+      load: [appConfig, typeOrmConfig],
       validationSchema: configSchema,
       validationOptions: {
-        allowUnknown: true,
+        // allowUnknown: true,
+        abortEarly: true,
       },
     }),
     TasksModule,
