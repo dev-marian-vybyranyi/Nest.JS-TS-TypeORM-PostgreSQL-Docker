@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateTaskLabelDto } from './create-task-label.dto';
 import { CreateTaskDto } from './ctreate-task.dto';
 import { WrongTaskStatusException } from './exeptions/wrong-task-status.exception';
+import { FindTaskParams } from './find-task.params';
 import { TaskLabel } from './task-label.entity';
 import { Task } from './task.entity';
 import { TaskStatus } from './tasks.model';
@@ -20,8 +21,13 @@ export class TasksService {
     private readonly labelsRepository: Repository<TaskLabel>,
   ) {}
 
-  public async findAll(): Promise<Task[]> {
-    return await this.taskRepository.find();
+  public async findAll(filters: FindTaskParams): Promise<Task[]> {
+    return await this.taskRepository.find({
+      where: {
+        status: filters.status,
+      },
+      relations: ['labels'],
+    });
   }
 
   public async findOne(id: string): Promise<Task | null> {
