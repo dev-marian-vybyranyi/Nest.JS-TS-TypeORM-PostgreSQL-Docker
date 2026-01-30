@@ -10,6 +10,7 @@ import { TypedConfigService } from './config/typed-config.service';
 import { DummyService } from './dummy/dummy.service';
 import { LoggerService } from './logger/logger.service';
 import { MessagesFormaterService } from './messages-formater/messages-formater.service';
+import { TaskLabel } from './tasks/task-label.entity';
 import { Task } from './tasks/task.entity';
 import { TasksModule } from './tasks/tasks.module';
 import { User } from './users/user.entity';
@@ -21,7 +22,7 @@ import { User } from './users/user.entity';
       inject: [ConfigService],
       useFactory: (configService: TypedConfigService) => ({
         ...configService.get('database'),
-        entities: [Task, User],
+        entities: [Task, User, TaskLabel],
       }),
     }),
     ConfigModule.forRoot({
