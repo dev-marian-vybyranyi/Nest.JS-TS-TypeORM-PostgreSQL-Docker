@@ -9,6 +9,7 @@ import { TaskLabel } from './task-label.entity';
 import { Task } from './task.entity';
 import { TaskStatus } from './tasks.model';
 import { UpdateTaskDto } from './update-task.dto';
+import { PaginationParams } from 'src/common/pagination.params';
 
 @Injectable()
 export class TasksService {
@@ -21,12 +22,17 @@ export class TasksService {
     private readonly labelsRepository: Repository<TaskLabel>,
   ) {}
 
-  public async findAll(filters: FindTaskParams): Promise<Task[]> {
-    return await this.taskRepository.find({
+  public async findAll(
+    filters: FindTaskParams,
+    pagination: PaginationParams,
+  ): Promise<[Task[], number]> {
+    return await this.taskRepository.findAndCount({
       where: {
         status: filters.status,
       },
       relations: ['labels'],
+      skip: pagination.offset,
+      take: pagination.limit,
     });
   }
 

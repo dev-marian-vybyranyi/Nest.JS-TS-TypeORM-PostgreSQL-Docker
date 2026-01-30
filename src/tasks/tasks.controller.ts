@@ -20,14 +20,26 @@ import { TasksService } from './tasks.service';
 import { UpdateTaskDto } from './update-task.dto';
 import { CreateTaskLabelDto } from './create-task-label.dto';
 import { FindTaskParams } from './find-task.params';
+import { PaginationParams } from 'src/common/pagination.params';
+import { PaginationResponse } from 'src/common/pagination.response';
 
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get()
-  public async findAll(@Query() filters: FindTaskParams): Promise<Task[]> {
-    return await this.tasksService.findAll(filters);
+  public async findAll(
+    @Query() filters: FindTaskParams,
+    @Query() pagination: PaginationParams,
+  ): Promise<PaginationResponse<Task>> {
+    const [items, total] = await this.tasksService.findAll(filters, pagination);
+    return {
+      data: items,
+      meta: {
+        total,
+        ...pagination,
+      },
+    };
   }
 
   @Get('/:id')
