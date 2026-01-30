@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateTaskLabelDto } from './create-task-label.dto';
 import { CreateTaskDto } from './ctreate-task.dto';
 import { WrongTaskStatusException } from './exeptions/wrong-task-status.exception';
+import { TaskLabel } from './task-label.entity';
 import { Task } from './task.entity';
 import { TaskStatus } from './tasks.model';
 import { UpdateTaskDto } from './update-task.dto';
@@ -14,6 +16,8 @@ export class TasksService {
   constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
+    @InjectRepository(TaskLabel)
+    private readonly labelsRepository: Repository<TaskLabel>,
   ) {}
 
   public async findAll(): Promise<Task[]> {
@@ -45,6 +49,17 @@ export class TasksService {
     }
 
     Object.assign(task, updateTaskDto);
+    return await this.taskRepository.save(task);
+  }
+
+  public async addLabels(
+    task: Task,
+    labelDtos: CreateTaskLabelDto[],
+  ): Promise<Task> {
+    const labels = labelDtos.map((label) =>
+      this.labelsRepository.create(label),
+    );
+    task.labels = [...task.labels, ...labels];
     return await this.taskRepository.save(task);
   }
 
