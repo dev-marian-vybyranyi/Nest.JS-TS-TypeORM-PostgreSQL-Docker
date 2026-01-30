@@ -5,10 +5,13 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  Unique,
+  Index,
 } from 'typeorm';
 import { Task } from './task.entity';
 
 @Entity()
+@Unique(['taskId', 'name'])
 export class TaskLabel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -17,9 +20,10 @@ export class TaskLabel {
   name: string;
 
   @Column()
+  @Index()
   taskId: string;
 
-  @ManyToOne(() => Task, (task) => task.labels)
+  @ManyToOne(() => Task, (task) => task.labels, { onDelete: 'CASCADE' })
   task: Task;
 
   @CreateDateColumn()
