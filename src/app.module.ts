@@ -11,6 +11,7 @@ import { DummyService } from './dummy/dummy.service';
 import { LoggerService } from './logger/logger.service';
 import { MessagesFormaterService } from './messages-formater/messages-formater.service';
 import { TasksModule } from './tasks/tasks.module';
+import { Task } from './tasks/task.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TasksModule } from './tasks/tasks.module';
       inject: [ConfigService],
       useFactory: (configService: TypedConfigService) => ({
         ...configService.get('database'),
+        entities: [Task],
       }),
     }),
     ConfigModule.forRoot({
