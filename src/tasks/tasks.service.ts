@@ -75,8 +75,19 @@ export class TasksService {
     return task;
   }
 
+  public async removeLabels(
+    task: Task,
+    labelsToRemove: string[],
+  ): Promise<Task> {
+    task.labels = task.labels.filter(
+      (lable) => !labelsToRemove.includes(lable.name),
+    );
+
+    return await this.taskRepository.save(task);
+  }
+
   public async deleteTask(task: Task): Promise<void> {
-    await this.taskRepository.delete(task);
+    await this.taskRepository.remove(task);
   }
 
   private isValidStatusTransition(
