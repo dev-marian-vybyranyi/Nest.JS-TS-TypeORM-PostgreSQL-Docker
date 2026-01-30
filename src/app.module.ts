@@ -1,22 +1,30 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appConfig } from './config/app.config';
-import { configSchema } from './config/config.types';
+import { appConfigSchema, ConfigType } from './config/config.types';
+import { typeOrmConfig } from './config/database.config';
 import { DummyService } from './dummy/dummy.service';
 import { LoggerService } from './logger/logger.service';
-import { MessagesFormaterService } from './messages-formater/messages-formater.service';
 import { TasksModule } from './tasks/tasks.module';
-import { typeOrmConfig } from './config/database.config';
+import { MessagesFormaterService } from './messages-formater/messages-formater.service';
 
 @Module({
   imports: [
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService<ConfigType>) => ({
+        ...configService.get('database'),
+      }),
+    }),
     ConfigModule.forRoot({
       load: [appConfig, typeOrmConfig],
-      validationSchema: configSchema,
+      validationSchema: appConfigSchema,
       validationOptions: {
-        // allowUnknown: true,
+        // allowUnknown: false,
         abortEarly: true,
       },
     }),
