@@ -9,6 +9,7 @@ import {
 import { TasksService } from './tasks.service';
 import { ITask } from './tasks.model';
 import { CreateTaskDto } from './ctreate-task.dto';
+import { FindOneParams } from './find-one.params';
 
 @Controller('tasks')
 export class TasksController {
@@ -20,8 +21,8 @@ export class TasksController {
   }
 
   @Get('/:id')
-  public findOne(@Param('id') id: string): ITask | undefined {
-    const task = this.tasksService.findOne(id);
+  public findOne(@Param() params: FindOneParams): ITask | undefined {
+    const task = this.tasksService.findOne(params.id);
 
     if (task) {
       return task;
