@@ -18,12 +18,27 @@
     <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
   <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
 </p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+This project is a **Task Management API** built with [NestJS](https://github.com/nestjs/nest), using TypeScript, TypeORM, PostgreSQL, and Docker. It features **User Authentication** and **Task Management** capabilities, serving as a robust foundation for building scalable backend applications.
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your `.env` file:
+
+```env
+APP_MESSAGE_PREFIX=your-app-message-prefix
+DB_HOST=your-db-host
+DB_PORT=your-db-port
+DB_USER=your-db-user
+DB_PASSWORD=your-db-password
+DB_DATABASE=your-db-database
+DB_SYNC=true
+
+JWT_TOKEN=your-jwt-secret-key
+JWT_EXPIRES_IN=your-jwt-expiration-time
+```
 
 ## Project setup
 
