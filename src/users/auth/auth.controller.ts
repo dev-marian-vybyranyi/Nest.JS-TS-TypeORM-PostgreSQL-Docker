@@ -2,21 +2,29 @@ import {
   Body,
   ClassSerializerInterceptor,
   Controller,
+  Get,
+  NotFoundException,
   Post,
+  Request,
   SerializeOptions,
   UseInterceptors,
 } from '@nestjs/common';
 import { CreateUserDto } from '../create-user.dto';
+import { AuthService } from './auth.service';
+import { User } from '../user.entity';
 import { LoginDto } from '../login.dto';
 import { LoginResponse } from '../login.response';
-import { User } from '../user.entity';
-import { AuthService } from './auth.service';
+import type { AuthRequest } from '../auth.request';
+import { UserService } from '../user/user.service';
 
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ strategy: 'excludeAll' })
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {
@@ -32,5 +40,16 @@ export class AuthController {
     );
 
     return new LoginResponse({ accessToken });
+  }
+
+  @Get('/profile')
+  async profile(@Request() request: AuthRequest): Promise<User> {
+    const user = await this.userService.findOne(request.user.sub);
+
+    if (user) {
+      return user;
+    }
+
+    throw new NotFoundException();
   }
 }
