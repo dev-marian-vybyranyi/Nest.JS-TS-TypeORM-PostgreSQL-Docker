@@ -10,13 +10,12 @@ import {
   Param,
   Patch,
   Post,
-  Query,
-  Request,
+  Query
 } from '@nestjs/common';
 
 import { PaginationParams } from 'src/common/pagination.params';
 import { PaginationResponse } from 'src/common/pagination.response';
-import type { AuthRequest } from 'src/users/auth.request';
+import { CurrentUserId } from 'src/users/decorators/current-user-id.decorator';
 import { CreateTaskLabelDto } from './create-task-label.dto';
 import { CreateTaskDto } from './ctreate-task.dto';
 import { WrongTaskStatusException } from './exeptions/wrong-task-status.exception';
@@ -53,11 +52,11 @@ export class TasksController {
   @Post()
   public async create(
     @Body() createTaskDto: CreateTaskDto,
-    @Request() request: AuthRequest,
+    @CurrentUserId() userId: string,
   ): Promise<Task> {
     return await this.tasksService.createTask({
       ...createTaskDto,
-      userId: request.user.sub,
+      userId,
     });
   }
 
