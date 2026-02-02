@@ -7,15 +7,14 @@ import {
   Post,
   Request,
   SerializeOptions,
-  UseGuards,
-  UseInterceptors,
+  UseInterceptors
 } from '@nestjs/common';
 import type { AuthRequest } from '../auth.request';
 import { CreateUserDto } from '../create-user.dto';
+import { Public } from '../decorators/public.decorator';
 import { LoginDto } from '../login.dto';
 import { LoginResponse } from '../login.response';
 import { User } from '../user.entity';
-import { AuthGuard } from '../user/auth.guard';
 import { UserService } from '../user/user.service';
 import { AuthService } from './auth.service';
 
@@ -29,12 +28,14 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Public()
   async register(@Body() createUserDto: CreateUserDto): Promise<User> {
     const user = await this.authService.register(createUserDto);
     return user;
   }
 
   @Post('login')
+  @Public()
   async login(@Body() loginDto: LoginDto): Promise<LoginResponse> {
     const accessToken = await this.authService.login(
       loginDto.email,
