@@ -15,6 +15,7 @@ import { TaskLabel } from './tasks/task-label.entity';
 import { Task } from './tasks/task.entity';
 import { TasksModule } from './tasks/tasks.module';
 import { User } from './users/user.entity';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { User } from './users/user.entity';
       },
     }),
     TasksModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [
