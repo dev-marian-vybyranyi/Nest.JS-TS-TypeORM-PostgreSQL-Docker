@@ -2,6 +2,7 @@ import { ConflictException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../create-user.dto';
 import { UserService } from '../user/user.service';
+import { User } from '../user.entity';
 
 @Injectable()
 export class AuthService {
@@ -22,5 +23,10 @@ export class AuthService {
     const user = await this.userService.createUser(createUserDto);
 
     return user;
+  }
+
+  private generateToken(user: User): string {
+    const payload = { sub: user.id, name: user.name };
+    return this.jwtService.sign(payload);
   }
 }
