@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   HttpStatus,
@@ -12,10 +13,9 @@ import {
   Post,
   Query
 } from '@nestjs/common';
-
-import { PaginationParams } from 'src/common/pagination.params';
-import { PaginationResponse } from 'src/common/pagination.response';
-import { CurrentUserId } from 'src/users/decorators/current-user-id.decorator';
+import { PaginationParams } from './../common/pagination.params';
+import { PaginationResponse } from './../common/pagination.response';
+import { CurrentUserId } from './../users/decorators/current-user-id.decorator';
 import { CreateTaskLabelDto } from './create-task-label.dto';
 import { CreateTaskDto } from './ctreate-task.dto';
 import { WrongTaskStatusException } from './exeptions/wrong-task-status.exception';
@@ -35,6 +35,7 @@ export class TasksController {
     @Query() pagination: PaginationParams,
   ): Promise<PaginationResponse<Task>> {
     const [items, total] = await this.tasksService.findAll(filters, pagination);
+
     return {
       data: items,
       meta: {
@@ -45,8 +46,13 @@ export class TasksController {
   }
 
   @Get('/:id')
-  public async findOne(@Param() params: FindOneParams): Promise<Task> {
-    return await this.findOneOrFail(params.id);
+  public async findOne(
+    @Param() params: FindOneParams,
+    @CurrentUserId() userId: string,
+  ): Promise<Task> {
+    const task = await this.findOneOrFail(params.id);
+    this.checkTaskOwnership(task, userId);
+    return task;
   }
 
   @Post()
@@ -64,8 +70,10 @@ export class TasksController {
   public async updateTask(
     @Param() params: FindOneParams,
     @Body() updateTaskDto: UpdateTaskDto,
+    @CurrentUserId() userId: string,
   ): Promise<Task> {
     const task = await this.findOneOrFail(params.id);
+    this.checkTaskOwnership(task, userId);
     try {
       return await this.tasksService.updateTask(task, updateTaskDto);
     } catch (error) {
@@ -76,39 +84,53 @@ export class TasksController {
     }
   }
 
-  @Post('/:id/labels')
+  @Delete('/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async deleteTask(
+    @Param() params: FindOneParams,
+    @CurrentUserId() userId: string,
+  ): Promise<void> {
+    const task = await this.findOneOrFail(params.id);
+    this.checkTaskOwnership(task, userId);
+    await this.tasksService.deleteTask(task);
+  }
+
+  @Post(':id/labels')
   async addLabels(
     @Param() { id }: FindOneParams,
     @Body() labels: CreateTaskLabelDto[],
+    @CurrentUserId() userId: string,
   ): Promise<Task> {
     const task = await this.findOneOrFail(id);
+    this.checkTaskOwnership(task, userId);
     return await this.tasksService.addLabels(task, labels);
   }
 
-  @Delete('/:id/labels')
+  @Delete(':id/labels')
   @HttpCode(HttpStatus.NO_CONTENT)
   async removeLabels(
     @Param() { id }: FindOneParams,
     @Body() labelNames: string[],
+    @CurrentUserId() userId: string,
   ): Promise<void> {
     const task = await this.findOneOrFail(id);
+    this.checkTaskOwnership(task, userId);
     await this.tasksService.removeLabels(task, labelNames);
-  }
-
-  @Delete('/:id')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async deleteTask(@Param() params: FindOneParams): Promise<void> {
-    const task = await this.findOneOrFail(params.id);
-    await this.tasksService.deleteTask(task);
   }
 
   private async findOneOrFail(id: string): Promise<Task> {
     const task = await this.tasksService.findOne(id);
 
-    if (task) {
-      return task;
+    if (!task) {
+      throw new NotFoundException();
     }
 
-    throw new NotFoundException();
+    return task;
+  }
+
+  private checkTaskOwnership(task: Task, userId: string): void {
+    if (task.userId !== userId) {
+      throw new ForbiddenException('You can only access your own tasks');
+    }
   }
 }
