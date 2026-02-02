@@ -1,11 +1,11 @@
-import { JwtService } from '@nestjs/jwt';
-import { getRepositoryToken } from '@nestjs/typeorm';
-import { PasswordService } from 'src/users/password/password.service';
-import { Role } from 'src/users/role.enum';
-import { User } from 'src/users/user.entity';
+import { PasswordService } from './../src/users/password/password.service';
+import { Role } from './../src/users/role.enum';
+import { User } from './../src/users/user.entity';
 import request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { TestSetup } from './utils/test-setup';
+import { getRepositoryToken } from '@nestjs/typeorm';
+import { JwtService } from '@nestjs/jwt';
 
 describe('Authentication & Authorization (e2e)', () => {
   let testSetup: TestSetup;
@@ -165,5 +165,19 @@ describe('Authentication & Authorization (e2e)', () => {
       .get('/auth/admin')
       .set('Authorization', `Bearer ${token}`)
       .expect(403);
+  });
+
+  it('/auth/register (POST) - attempting to register as an admin', async () => {
+    const userAdmin = {
+      ...testUser,
+      roles: [Role.ADMIN],
+    };
+    await request(testSetup.app.getHttpServer())
+      .post('/auth/register')
+      .send(userAdmin)
+      .expect(201)
+      .expect((res) => {
+        expect(res.body.roles).toEqual([Role.USER]);
+      });
   });
 });
