@@ -16,6 +16,7 @@ import { Task } from './tasks/task.entity';
 import { TasksModule } from './tasks/tasks.module';
 import { User } from './users/user.entity';
 import { UsersModule } from './users/users.module';
+import { PasswordService } from './users/password/password.service';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { UsersModule } from './users/users.module';
       provide: TypedConfigService,
       useExisting: ConfigService,
     },
+    PasswordService,
   ],
 })
 export class AppModule {}
