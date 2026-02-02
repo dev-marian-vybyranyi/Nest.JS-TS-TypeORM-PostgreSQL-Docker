@@ -9,6 +9,8 @@ import { UserService } from './user/user.service';
 import { AuthService } from './auth/auth.service';
 import { AuthController } from './auth/auth.controller';
 
+import { PasswordService } from './password/password.service';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -23,7 +25,7 @@ import { AuthController } from './auth/auth.controller';
       }),
     }),
   ],
-  providers: [UserService, AuthService],
+  providers: [UserService, AuthService, PasswordService],
   controllers: [AuthController],
 })
 export class UsersModule {}
