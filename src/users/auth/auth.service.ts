@@ -1,7 +1,7 @@
 import {
-    ConflictException,
-    Injectable,
-    UnauthorizedException,
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { CreateUserDto } from '../create-user.dto';
@@ -17,7 +17,7 @@ export class AuthService {
     private readonly passwordService: PasswordService,
   ) {}
 
-  public async register(createUserDto: CreateUserDto) {
+  public async register(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.userService.findOneByEmail(
       createUserDto.email,
     );
