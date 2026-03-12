@@ -2,7 +2,7 @@ name: Dev deployment
 
 on:
   push:
-    branches: ["dev"]
+    branches: ['dev']
   workflow_dispatch:
 
 jobs:
@@ -38,6 +38,14 @@ jobs:
     environment: dev
     needs: setup-env
     steps:
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install dependencies
         run: npm ci
 
