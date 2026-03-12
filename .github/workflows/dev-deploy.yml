@@ -2,25 +2,48 @@ name: Dev deployment
 
 on:
   push:
-    branches: ['dev']
+    branches: ["dev"]
   workflow_dispatch:
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
-  checkout:
+  build-and-push:
     runs-on: [self-hosted, dev]
     environment: dev
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-  setup-env:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
+
+  deploy:
     runs-on: [self-hosted, dev]
     environment: dev
-    needs: checkout
+    needs: build-and-push
+
     steps:
       - name: Create .env file
         run: |
-          cat > .env << EOF
+          cat > /home/ubuntu/.env << EOF
           APP_MESSAGE_PREFIX=${{ vars.APP_MESSAGE_PREFIX }}
           DB_HOST=${{ vars.DB_HOST }}
           DB_PORT=${{ vars.DB_PORT }}
@@ -33,36 +56,24 @@ jobs:
           APP_PORT=${{ vars.APP_PORT }}
           EOF
 
-  build:
-    runs-on: [self-hosted, dev]
-    environment: dev
-    needs: setup-env
-    steps:
-      - name: Cache node_modules
-        uses: actions/cache@v4
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          path: node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Pull latest image
+        run: docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
 
-      - name: Build
-        run: npm run build
+      - name: Stop and remove existing container
+        run: docker stop tasks-app-dev || true && docker rm tasks-app-dev || true
 
-  deploy:
-    runs-on: [self-hosted, dev]
-    environment: dev
-    needs: build
-    steps:
-      - name: Stop existing app
-        run: pm2 stop tasks-app || true
-
-      - name: Run migrations and start app
+      - name: Run new container
         run: |
-          APP_PORT=${{ vars.APP_PORT }} pm2 start npm --name "tasks-app" -- run start:prod
-
-      - name: Save pm2 process list
-        run: pm2 save
+          docker run -d \
+            --name tasks-app-dev \
+            --env-file /home/ubuntu/.env \
+            --network host \
+            --restart unless-stopped \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:dev
