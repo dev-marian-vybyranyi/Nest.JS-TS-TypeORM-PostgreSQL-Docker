@@ -52,6 +52,7 @@ jobs:
           JWT_TOKEN=${{ secrets.JWT_TOKEN }}
           JWT_EXPIRES_IN=${{ vars.JWT_EXPIRES_IN }}
           APP_PORT=${{ vars.APP_PORT }}
+          SENTRY_DSN=${{ secrets.SENTRY_DSN }}
           EOF
 
       - name: Log in to GitHub Container Registry
