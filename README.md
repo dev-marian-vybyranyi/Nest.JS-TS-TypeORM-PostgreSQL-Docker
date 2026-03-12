@@ -1,153 +1,132 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Task Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Welcome to the **Task Management API**! This is a robust, well-structured scalable backend application built with **NestJS** and **TypeScript**. Its purpose is to provide a complete set of features for user authentication and task management, including labels and organizational capabilities.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
+The project is built around modern software engineering principles, employing an Object-Relational Mapper (TypeORM) with a scalable relational database (PostgreSQL), and is entirely containerized for painless execution using Docker. The repository includes fully automated Continuous Integration and Deployment (CI/CD) pipelines managed by GitHub Actions.
 
-## Description
+---
 
-This project is a **Task Management API** built with [NestJS](https://github.com/nestjs/nest), using TypeScript, TypeORM, PostgreSQL, and Docker. It features **User Authentication** and **Task Management** capabilities, serving as a robust foundation for building scalable backend applications.
+## 🚀 Key Features
 
-## Environment Variables
+- **User Authentication & Authorization**: Secure user registration, login, and token generation using **Passport.js**, **JWT** (JSON Web Tokens), and secure password hashing via **bcrypt**.
+- **Task Management System:** Users can easily perform CRUD (Create, Read, Update, Delete) operations to manage their daily assignments.
+- **Task Labels**: Users can categorize and structure their tasks efficiently by applying custom or predefined labels.
+- **Advanced Data Validation**: Strict validation schemas and DTOs inside of NestJS utilizing `class-validator`, `class-transformer`, and `Joi`.
+- **Database & Migration Strategy**: Comprehensive configuration implemented using **TypeORM** for interacting seamlessly with a **PostgreSQL** database, keeping database schemas in sync with TypeScript entities.
+- **Centralized Application Logging**: Native integration with **Sentry** to monitor the state of the API and catch errors intelligently across different environments.
+- **CI/CD Workflows**: Streamlined `deploy.yml`, `prod-deploy.yml`, and `dev-deploy.yml` workflows configured with **GitHub Actions** for hassle-free deployments to a DigitalOcean App Platform environment.
+- **Dockerized Environment**: Quick and reliable containerized startup leveraging a `.dockerignore`, `Dockerfile` and a `docker-compose.yml` file, making it easy to spin up a fully working local cluster (API + Database).
 
-To run this project, you will need to add the following environment variables to your `.env` file:
+---
 
-```env
-APP_MESSAGE_PREFIX=your-app-message-prefix
-DB_HOST=your-db-host
-DB_PORT=your-db-port
-DB_USER=your-db-user
-DB_PASSWORD=your-db-password
-DB_DATABASE=your-db-database
-DB_SYNC=true
+## 🛠 Tech Stack
 
-JWT_TOKEN=your-jwt-secret-key
-JWT_EXPIRES_IN=your-jwt-expiration-time
-```
+- **Framework**: [NestJS](https://nestjs.com/)
+- **Language**: TypeScript
+- **Database**: PostgreSQL
+- **ORM / Query Builder**: TypeORM
+- **Testing**: Jest (Unit & e2e testing strategies implemented)
+- **Containerization**: Docker, Docker Compose
+- **Code Quality**: ESLint, Prettier
 
-## Project setup
+---
+
+## 🏗 Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (Version 18 or above recommended)
+- [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/)
+- [PostgreSQL](https://www.postgresql.org/) (If running locally outside of the Docker network)
+
+### 1. Clone the repository and install dependencies
 
 ```bash
+$ git clone <your-repository-url>
+$ cd Nest.JS-TS-TypeORM-PostgreSQL-Docker
 $ npm install
 ```
 
-## Compile and run the project
+### 2. Configure Environment Variables
+
+Create a `.env` file in the root directory and populate it with the appropriate values:
+
+```env
+APP_MESSAGE_PREFIX=NestJS-Task-API
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_pg_user
+DB_PASSWORD=your_pg_password
+DB_DATABASE=your_pg_database
+DB_SYNC=true
+
+JWT_TOKEN=your-very-secure-jwt-secret-key
+JWT_EXPIRES_IN=3600s
+```
+
+### 3. Running the application (Locally)
+
+To start the compiled NestJS application server:
 
 ```bash
-# development
+# Development
 $ npm run start
 
-# watch mode
+# Watch mode (automatically restarts on file changes)
 $ npm run start:dev
 
-# production mode
+# Production mode
 $ npm run start:prod
 ```
 
-## Run tests
+### 4. Running the application (via Docker)
+
+Alternatively, you can boot the entire stack (PostgreSQL + NestJS API) automatically using Docker.
 
 ```bash
-# unit tests
+# Pull images and build the local container setup
+$ docker-compose up --build
+```
+> Note: Make sure to check your `docker-compose.yml` file to verify that ports and database user configurations map correctly to what's inside your `.env` variables.
+
+---
+
+## 🧪 Testing
+
+The API includes strong unit testing and end-to-end (e2e) testing structures.
+
+```bash
+# Run Unit Tests
 $ npm run test
 
-# e2e tests
+# Run End-to-End Tests
 $ npm run test:e2e
 
-# test coverage
+# Get Test Coverage
 $ npm run test:cov
 ```
 
-## Deployment
+---
 
-### Configuration Files
+## 📦 Deployment Strategy
 
-#### Dockerfile
+The application includes automated deployment configurations built specifically for **DigitalOcean's App Platform** using **GitHub Actions**.
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-EXPOSE 3000
-CMD ["npm", "run", "start:prod"]
-```
+### Dockerfile Strategy
+The given `Dockerfile` generates a minimal Node.js `alpine` container structure designed for production environments that performs a slimmened install (`npm ci`) and isolates the final `dist/` compilation artifacts.
 
-Creates a lightweight container with your app, installing only production dependencies.
+### Digital Ocean Health Check
+DigitalOcean leverages the native `@Get('/health')` endpoint implemented inside the root AppController to verify container integrity during and after deployment.
 
-#### .dockerignore
+### Continuous Deployment (CI/CD)
+Using the defined configuration files within the `.github/workflows` directory, pushes branch events towards designated `dev` or `prod` targets seamlessly orchestrate server redeployments with completely transparent downtime.
 
-```
-node_modules
-dist
-.git
-.env
-```
+---
 
-Excludes unnecessary files from the container to keep it small and secure.
+## 📄 License & Credits
 
-### Health Check
+This project template leverages the standard boilerplate ecosystem provided by [NestJS](https://nestjs.com), an MIT-licensed open source framework.
 
-```typescript
-@Get('/health')
-check() {
-  return true;
-}
-```
-
-Endpoint that DigitalOcean uses to verify your app is running.
-
-### Deploy to DigitalOcean App Platform
-
-1. Log in to DigitalOcean
-2. Create New App → Choose GitHub repo
-3. Select "Dockerfile" as build method
-4. Add environment variables:
-   - Database URL (if using managed database)
-   - Any other environment variables your app needs
-5. Click Deploy
-
-Your app will automatically deploy when you push to the main branch. DigitalOcean handles SSL, scaling, and container management for you.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+Developed as a highly efficient and standardized backend REST architecture.
