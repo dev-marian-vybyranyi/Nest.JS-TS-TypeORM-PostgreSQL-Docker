@@ -52,6 +52,8 @@ jobs:
           context: .
           push: true
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
+          cache-to: type=inline
 
   deploy:
     runs-on: ${{ fromJson(format('["self-hosted", "{0}"]', inputs.runner)) }}
